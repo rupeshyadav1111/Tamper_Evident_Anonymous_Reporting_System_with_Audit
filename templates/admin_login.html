@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Access</title>
+
+<style>
+  .error-box {
+    background: #ffebee;
+    color: #b71c1c;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 15px;
+    border-left: 4px solid #b71c1c;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    50% { transform: translateX(4px); }
+    75% { transform: translateX(-4px); }
+    100% { transform: translateX(0); }
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #141e30, #243b55);
+}
+
+.card {
+    background: #ffffff;
+    padding: 35px;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #243b55;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+input:focus {
+    border-color: #243b55;
+    outline: none;
+    box-shadow: 0 0 6px rgba(36,59,85,0.3);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #243b55;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #141e30;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.security-note {
+    font-size: 12px;
+    margin-top: 15px;
+    color: #777;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Administrator Access</h2>
+    {% if error %}
+    <div class="error-box">
+        {{ error }}
+    </div>
+{% endif %}
+    <form method="POST" onsubmit="return handleLogin()">
+        <input type="password"
+               name="pin"
+               id="pinInput"
+               placeholder="Enter Admin PIN"
+               required>
+
+        <button type="submit" id="loginBtn">
+            Login
+        </button>
+    </form>
+
+    <div class="security-note">
+        Restricted to authorized personnel only.
+    </div>
+</div>
+
+<script>
+function handleLogin() {
+    const pin = document.getElementById("pinInput").value.trim();
+    const btn = document.getElementById("loginBtn");
+
+    if (pin.length < 3) {
+        alert("Invalid PIN format.");
+        return false;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Authenticating...";
+    return true;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+Threat: Insider modifies report content
+Impact: Loss of trust
+Mitigation: Hash-based tamper detection
+
+Threat: Admin denies accessing report
+Mitigation: Immutable audit logs
+
+Threat: Token guessing
+Mitigation: UUID-based high entropy tokens

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Conversation</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #eef2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Chat Container */
+.chat-container {
+    width: 100%;
+    max-width: 750px;
+    height: 90vh;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+/* Header */
+.chat-header {
+    background: #243b55;
+    color: white;
+    padding: 15px 20px;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Messages Area */
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #f9fbff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message Bubble */
+.message {
+    margin-bottom: 12px;
+    max-width: 75%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+
+.user {
+    background: #e3f2fd;
+    align-self: flex-start;
+}
+
+.admin {
+    background: #dcedc8;
+    align-self: flex-end;
+}
+
+.system {
+    background: #ffebee;
+    align-self: center;
+    font-weight: bold;
+}
+
+.sender {
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    opacity: 0.6;
+}
+
+.timestamp {
+    font-size: 10px;
+    margin-top: 4px;
+    opacity: 0.5;
+}
+
+/* Input Area */
+.chat-input {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background: white;
+    display: flex;
+    gap: 10px;
+}
+
+textarea {
+    flex: 1;
+    resize: none;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    height: 50px;
+}
+
+textarea:focus {
+    border-color: #243b55;
+    outline: none;
+    box-shadow: 0 0 5px rgba(36,59,85,0.3);
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #243b55;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #141e30;
+}
+
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+.back-btn {
+    background: #555;
+}
+
+.back-btn:hover {
+    background: #333;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <div class="chat-header">
+        <div>Admin Conversation</div>
+        <button class="back-btn" onclick="goBack()">Back</button>
+    </div>
+
+    <div class="chat-messages" id="chatBox">
+        {% if messages %}
+            {% for m in messages %}
+                <div class="message {{ m[0] }}">
+                    <div class="sender">
+                        {% if m[0] == "admin" %}
+                            ADMIN
+                        {% elif m[0] == "user" %}
+                            USER
+                        {% elif m[0] == "system" %}
+                            SYSTEM
+                        {% else %}
+                            {{ m[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div>{{ m[1] }}</div>
+                    <div class="timestamp">{{ m[2] }}</div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No messages yet.</p>
+        {% endif %}
+    </div>
+
+    <form method="POST" class="chat-input" onsubmit="return handleSend();">
+        <textarea name="message"
+                  id="messageInput"
+                  placeholder="Type your reply..."
+                  required></textarea>
+        <button type="submit">Send</button>
+    </form>
+
+</div>
+
+<script>
+// Auto scroll to bottom
+const chatBox = document.getElementById("chatBox");
+chatBox.scrollTop = chatBox.scrollHeight;
+
+// Enter to send
+document.getElementById("messageInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        this.form.submit();
+    }
+});
+
+function handleSend() {
+    const input = document.getElementById("messageInput");
+    if (input.value.trim().length < 1) return false;
+    return true;
+}
+
+function goBack() {
+    window.location.href = "/admin";
+}
+</script>
+
+</body>
+</html>

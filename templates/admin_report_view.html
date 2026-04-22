@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Details</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: #243b55;
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    font-weight: 500;
+}
+
+/* Container */
+.container {
+    padding: 30px;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Card */
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+/* Status Badge */
+.status {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.status.SUBMITTED { background: #2196F3; }
+.status.UNDER_REVIEW { background: #ff9800; }
+.status.CLOSED { background: #4CAF50; }
+.status.TAMPERED { background: #b71c1c; }
+
+/* Tamper Warning */
+.tamper-warning {
+    background: #ffebee;
+    color: #b71c1c;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 5px solid #b71c1c;
+    font-size: 14px;
+}
+
+/* Report content */
+.report-content {
+    white-space: pre-wrap;
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Label */
+.label {
+    font-size: 13px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #555;
+}
+
+/* Buttons */
+.btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: 0.3s;
+}
+
+.close-btn {
+    background: #4CAF50;
+    color: white;
+}
+
+.close-btn:hover {
+    background: #3e8e41;
+}
+
+.message-btn {
+    background: #2a5298;
+    color: white;
+}
+
+.message-btn:hover {
+    background: #1e3c72;
+}
+
+.back-btn {
+    background: #555;
+    color: white;
+}
+
+.back-btn:hover {
+    background: #333;
+}
+
+.disabled-note {
+    color: #777;
+    font-size: 13px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>Report Details</h2>
+    <div class="status {{ status }}">
+        {% if status == "TAMPERED" %}
+            TAMPERED (SECURITY ALERT)
+        {% else %}
+            {{ status.replace("_", " ").title() }}
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="card">
+
+        <!-- 🔴 Tamper Warning -->
+        {% if status == "TAMPERED" %}
+        <div class="tamper-warning">
+            ⚠ This report has been tampered. Showing original secure copy from master database.
+        </div>
+        {% endif %}
+
+        <strong>Report ID:</strong> {{ report_id }}
+
+        <!-- Label -->
+        {% if status == "TAMPERED" %}
+            <div class="label">Original Report (Recovered)</div>
+        {% else %}
+            <div class="label">Report Content</div>
+        {% endif %}
+
+        <div class="report-content">
+            {{ content }}
+        </div>
+    </div>
+
+    <div class="card">
+
+        <!-- Close Button -->
+        {% if status == 'UNDER_REVIEW' %}
+            <form method="POST"
+                  action="/close/{{ report_id }}"
+                  onsubmit="return confirmClose();"
+                  style="display:inline;">
+                <button type="submit" class="btn close-btn">
+                    Close Ticket
+                </button>
+            </form>
+        {% else %}
+            <div class="disabled-note">
+                No actions available for {{ status.replace("_", " ").lower() }} reports.
+            </div>
+        {% endif %}
+
+        <!-- Message Button -->
+        {% if status != 'TAMPERED' %}
+        <a href="/messages/{{ report_id }}">
+            <button class="btn message-btn">
+                Message Reporter
+            </button>
+        </a>
+        {% endif %}
+
+        <a href="/admin">
+            <button class="btn back-btn">
+                Back to Dashboard
+            </button>
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+function confirmClose() {
+    return confirm("Are you sure you want to close this ticket? This action cannot be undone.");
+}
+</script>
+
+</body>
+</html>

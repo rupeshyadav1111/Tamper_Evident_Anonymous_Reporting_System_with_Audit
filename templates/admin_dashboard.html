@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #f4f6f9;
+    min-height: 100vh;
+}
+
+/* Header */
+.header {
+    background: #243b55;
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    font-weight: 500;
+}
+
+.logout-btn {
+    background: #c62828;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #b71c1c;
+}
+
+/* Container */
+.container {
+    padding: 25px;
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+th {
+    background: #2a5298;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f9fbff;
+}
+
+tr:hover {
+    background: #eef3ff;
+}
+
+/* 🔴 Highlight tampered row */
+tr.tampered-row {
+    background: #ffebee !important;
+}
+
+/* Status Badges */
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.status.SUBMITTED { background: #2196F3; }
+.status.UNDER_REVIEW { background: #ff9800; }
+.status.CLOSED { background: #4CAF50; }
+
+.status.TAMPERED {
+    background: #b71c1c;
+    animation: pulse 1.2s infinite;
+}
+
+/* Pulse effect */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(183,28,28,0.6); }
+    70% { box-shadow: 0 0 0 8px rgba(183,28,28,0); }
+    100% { box-shadow: 0 0 0 0 rgba(183,28,28,0); }
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    text-decoration: none;
+    color: white;
+    margin-right: 5px;
+    transition: 0.3s;
+}
+
+.view-btn { background: #2a5298; }
+.view-btn:hover { background: #1e3c72; }
+
+.msg-btn { background: #4CAF50; }
+.msg-btn:hover { background: #3e8e41; }
+
+/* Disabled button */
+.disabled-btn {
+    background: #999 !important;
+    cursor: not-allowed;
+}
+
+/* Report ID styling */
+.report-id {
+    font-family: monospace;
+    font-size: 12px;
+    color: #444;
+}
+
+/* Empty */
+.empty {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>Admin Dashboard</h2>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="container">
+
+{% if reports|length == 0 %}
+    <div class="empty">
+        No reports available.
+    </div>
+{% else %}
+    <table>
+        <thead>
+            <tr>
+                <th>Report ID</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in reports %}
+
+            <tr class="{% if r[1] == 'TAMPERED' %}tampered-row{% endif %}">
+
+                <!-- Report ID -->
+                <td class="report-id">
+                    {{ r[0][:8] }}...
+                </td>
+
+                <!-- Status -->
+                <td>
+                    <span class="status {{ r[1] }}">
+                        {% if r[1] == "TAMPERED" %}
+                            SECURITY ALERT
+                        {% else %}
+                            {{ r[1].replace("_", " ").title() }}
+                        {% endif %}
+                    </span>
+                </td>
+
+                <!-- Actions -->
+                <td>
+                    <a href="/view/{{ r[0] }}" class="action-btn view-btn">
+                        View
+                    </a>
+
+                    {% if r[1] != 'TAMPERED' %}
+                        <a href="/messages/{{ r[0] }}" class="action-btn msg-btn">
+                            Messages
+                        </a>
+                    {% else %}
+                        <span class="action-btn disabled-btn">
+                            Disabled
+                        </span>
+                    {% endif %}
+                </td>
+
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+
+</div>
+
+<script>
+function logout() {
+    if (confirm("Are you sure you want to logout?")) {
+        window.location.href = "/logout";
+    }
+}
+</script>
+
+</body>
+</html>

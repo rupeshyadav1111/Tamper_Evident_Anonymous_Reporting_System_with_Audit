@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Tampered</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f44336;
+}
+
+.card {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+h2 {
+    color: #f44336;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    background: #243b55;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #141e30;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>⚠ Report Integrity Compromised</h2>
+    <p>
+        This report has been detected as tampered.
+        Its contents can no longer be trusted.
+    </p>
+
+    <button onclick="goBack()">Back to Dashboard</button>
+</div>
+
+<script>
+function goBack() {
+    window.location.href = "/admin";
+}
+</script>
+
+</body>
+</html>

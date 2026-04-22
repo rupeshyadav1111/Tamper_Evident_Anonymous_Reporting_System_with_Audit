@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anonymous Reporting Portal</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+/* Card */
+.card {
+    background: white;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    animation: fadeIn 0.6s ease;
+}
+
+/* Heading */
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #2a5298;
+}
+
+/* Subtitle */
+.subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.primary-btn {
+    background-color: #2a5298;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #1e3c72;
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: #3e8e41;
+    transform: translateY(-2px);
+}
+
+/* Divider */
+hr {
+    margin: 25px 0;
+    border: none;
+    height: 1px;
+    background: #ddd;
+}
+
+/* Input */
+label {
+    font-size: 14px;
+    color: #444;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+input:focus {
+    border-color: #2a5298;
+    outline: none;
+    box-shadow: 0 0 6px rgba(42,82,152,0.3);
+}
+
+/* Error box (SERVER + CLIENT) */
+.error-box {
+    background: #ffebee;
+    color: #b71c1c;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 10px;
+    border-left: 4px solid #b71c1c;
+    display: none;
+}
+
+/* Show server error */
+.error-box.show {
+    display: block;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Anonymous Reporting Portal</h2>
+
+    <div class="subtitle">
+        Secure anonymous reporting system with integrity protection
+    </div>
+
+    <!-- New Report -->
+    <a href="/submit-ui">
+        <button class="btn primary-btn">
+            Report a New Issue
+        </button>
+    </a>
+
+    <hr>
+
+    <!-- Existing Token -->
+    <form method="POST" onsubmit="return validateToken()">
+
+        <label>Enter Your Report Token</label>
+
+        <input type="text"
+               name="token"
+               id="tokenInput"
+               placeholder="Paste your token here"
+               required>
+
+        <!-- SERVER ERROR -->
+        {% if error %}
+        <div class="error-box show">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- CLIENT ERROR -->
+        <div class="error-box" id="errorMsg">
+            Please enter a valid token.
+        </div>
+
+        <button type="submit" class="btn secondary-btn">
+            Continue Conversation
+        </button>
+    </form>
+
+</div>
+
+<script>
+function validateToken() {
+    const token = document.getElementById("tokenInput").value.trim();
+    const error = document.getElementById("errorMsg");
+
+    if (token.length < 10) {
+        error.style.display = "block";
+        return false;
+    }
+
+    error.style.display = "none";
+    return true;
+}
+</script>
+
+</body>
+</html>

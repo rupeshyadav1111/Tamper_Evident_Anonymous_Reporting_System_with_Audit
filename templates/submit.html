@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit Anonymous Report</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+    }
+
+    .card {
+        background: white;
+        padding: 35px;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        animation: fadeIn 0.6s ease;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #2a5298;
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        resize: none;
+        transition: 0.3s;
+        min-height: 140px;
+    }
+
+    textarea:focus {
+        border-color: #2a5298;
+        outline: none;
+        box-shadow: 0 0 6px rgba(42,82,152,0.3);
+    }
+
+    .char-count {
+        text-align: right;
+        font-size: 12px;
+        margin-top: 5px;
+        color: #666;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.3s ease;
+    }
+
+    .submit-btn {
+        background-color: #2a5298;
+        color: white;
+    }
+
+    .submit-btn:hover {
+        background-color: #1e3c72;
+        transform: translateY(-2px);
+    }
+
+    .submit-btn:disabled {
+        background-color: #999;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .back-btn {
+        background-color: #555;
+        color: white;
+    }
+
+    .back-btn:hover {
+        background-color: #333;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+        .card {
+            padding: 25px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Submit Anonymous Report</h2>
+
+    <form method="POST" action="/submit-ui" onsubmit="return handleSubmit()">
+        <textarea id="reportContent"
+                  name="content"
+                  required
+                  placeholder="Describe your issue clearly and provide as much detail as possible..."></textarea>
+
+        <div class="char-count">
+            Characters: <span id="charCount">0</span>
+        </div>
+
+        <button type="submit" class="btn submit-btn" id="submitBtn">
+            Submit Report
+        </button>
+    </form>
+
+    <button class="btn back-btn" onclick="goBack()">
+        Back to Home
+    </button>
+</div>
+
+<script>
+const textarea = document.getElementById("reportContent");
+const charCount = document.getElementById("charCount");
+const submitBtn = document.getElementById("submitBtn");
+
+textarea.addEventListener("input", function() {
+    charCount.textContent = textarea.value.length;
+});
+
+function handleSubmit() {
+    if (textarea.value.trim().length < 10) {
+        alert("Please provide a more detailed description.");
+        return false;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+    return true;
+}
+
+function goBack() {
+    window.location.href = "/";
+}
+</script>
+
+</body>
+</html>

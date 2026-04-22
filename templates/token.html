@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Report Submitted</title>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #11998e, #38ef7d);
+    }
+
+    .card {
+        background: white;
+        padding: 35px;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 12px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        text-align: center;
+        animation: fadeIn 0.6s ease;
+    }
+
+    h2 {
+        color: #2e7d32;
+        margin-bottom: 15px;
+    }
+
+    .token-box {
+        background: #f4f4f4;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 14px;
+        word-break: break-all;
+        margin: 15px 0;
+        border: 1px dashed #2e7d32;
+    }
+
+    .warning {
+        font-size: 13px;
+        color: #c62828;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-top: 10px;
+    }
+
+    .copy-btn {
+        background-color: #2e7d32;
+        color: white;
+    }
+
+    .copy-btn:hover {
+        background-color: #1b5e20;
+        transform: translateY(-2px);
+    }
+
+    .message-btn {
+        background-color: #2a5298;
+        color: white;
+    }
+
+    .message-btn:hover {
+        background-color: #1e3c72;
+        transform: translateY(-2px);
+    }
+
+    .home-btn {
+        background-color: #555;
+        color: white;
+    }
+
+    .home-btn:hover {
+        background-color: #333;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Report Submitted Successfully</h2>
+
+    <p>Your anonymous report has been received.</p>
+
+    <div class="token-box" id="tokenText">
+        {{ token }}
+    </div>
+
+    <div class="warning">
+        ⚠️ Please save this token securely. You will need it to continue communication.
+    </div>
+
+    <button class="btn copy-btn" onclick="copyToken()">
+        Copy Token
+    </button>
+
+    <button class="btn message-btn"
+            onclick="goToMessages()">
+        Go to Conversation
+    </button>
+
+    <button class="btn home-btn"
+            onclick="goHome()">
+        Back to Home
+    </button>
+</div>
+
+<script>
+function copyToken() {
+    const token = document.getElementById("tokenText").innerText;
+    navigator.clipboard.writeText(token).then(() => {
+        alert("Token copied to clipboard.");
+    });
+}
+
+function goToMessages() {
+    const token = document.getElementById("tokenText").innerText;
+    window.location.href = "/messages-ui/" + token;
+}
+
+function goHome() {
+    window.location.href = "/";
+}
+</script>
+
+</body>
+</html>
