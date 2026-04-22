@@ -5,20 +5,10 @@ from flask import (
 from db import get_db
 from security import generate_hash
 from audit import log_action
-
-# -------------------------------
-# CONFIG
-# -------------------------------
 ADMIN_PIN = "4321"
 ADMIN_PORT = 7001
-
 app = Flask(__name__)
 app.secret_key = "VERY_SECRET_ADMIN_KEY_123"
-
-
-# -------------------------------
-# GLOBAL SECURITY GUARD
-# -------------------------------
 @app.before_request
 def enforce_admin_security():
     if request.endpoint in ("admin_login", "static"):
@@ -30,18 +20,10 @@ def enforce_admin_security():
     if not session.get("admin"):
         return redirect("/login")
 
-
-# -------------------------------
-# ROOT
-# -------------------------------
 @app.route("/")
 def root():
     return "Admin service is running. Use /login"
 
-
-# -------------------------------
-# ADMIN LOGIN
-# -------------------------------
 @app.route("/login", methods=["GET", "POST"])
 def admin_login():
     error = None
@@ -58,10 +40,6 @@ def admin_login():
 
     return render_template("admin_login.html", error=error)
 
-
-# -------------------------------
-# ADMIN DASHBOARD
-# -------------------------------
 @app.route("/admin")
 def admin_dashboard():
     db = get_db()
@@ -74,16 +52,12 @@ def admin_dashboard():
 
     return render_template("admin_dashboard.html", reports=reports)
 
-
-# -------------------------------
-# VIEW REPORT (MASTER DB + LIFECYCLE)
-# -------------------------------
 @app.route("/view/<report_id>")
 def view_report(report_id):
     db = get_db()
     cursor = db.cursor()
 
-    # Fetch working copy
+
     cursor.execute(
         "SELECT content, content_hash, status FROM reports WHERE report_id = %s",
         (report_id,)
@@ -96,10 +70,9 @@ def view_report(report_id):
     content, stored_hash, status = row
     current_hash = generate_hash(content)
 
-    # 🔴 TAMPER CHECK
+    
     if stored_hash != current_hash:
 
-        # Mark as tampered ONLY ONCE
         if status != "TAMPERED":
             cursor.execute(
                 "UPDATE reports SET status = 'TAMPERED' WHERE report_id = %s",
@@ -109,7 +82,7 @@ def view_report(report_id):
 
             log_action(report_id, "TAMPERING_DETECTED", "system")
 
-        # 🔥 Fetch ORIGINAL from master DB
+        
         cursor.execute(
             "SELECT original_content FROM master_reports WHERE report_id = %s",
             (report_id,)
@@ -127,7 +100,6 @@ def view_report(report_id):
             status="TAMPERED"
         )
 
-    # 🟡 SUBMITTED → UNDER_REVIEW ONLY
     if status == "SUBMITTED":
         cursor.execute(
             "UPDATE reports SET status = 'UNDER_REVIEW' WHERE report_id = %s",
@@ -145,10 +117,6 @@ def view_report(report_id):
         status=status
     )
 
-
-# -------------------------------
-# CLOSE TICKET (STRICT + IDEMPOTENT)
-# -------------------------------
 @app.route("/close/<report_id>", methods=["POST"])
 def close_ticket(report_id):
     db = get_db()
@@ -165,18 +133,15 @@ def close_ticket(report_id):
 
     status = row[0]
 
-    # 🚫 Terminal states
     if status in ("CLOSED", "TAMPERED"):
         return redirect(f"/view/{report_id}")
 
-    # ✅ UNDER_REVIEW → CLOSED
     cursor.execute(
         "UPDATE reports SET status = 'CLOSED' WHERE report_id = %s",
         (report_id,)
     )
     db.commit()
 
-    # Keep closure message (valid)
     cursor.execute(
         "INSERT INTO messages (report_id, sender, message) VALUES (%s, %s, %s)",
         (
@@ -191,16 +156,11 @@ def close_ticket(report_id):
 
     return redirect(f"/view/{report_id}")
 
-
-# -------------------------------
-# VIEW & SEND MESSAGES (ADMIN)
-# -------------------------------
 @app.route("/messages/<report_id>", methods=["GET", "POST"])
 def view_messages(report_id):
     db = get_db()
     cursor = db.cursor()
 
-    # Check status
     cursor.execute(
         "SELECT status FROM reports WHERE report_id = %s",
         (report_id,)
@@ -212,7 +172,6 @@ def view_messages(report_id):
 
     status = row[0]
 
-    # 🚫 Block tampered access
     if status == "TAMPERED":
         return redirect(f"/view/{report_id}")
 
@@ -242,11 +201,6 @@ def view_messages(report_id):
         messages=rows,
         report_id=report_id
     )
-
-
-# -------------------------------
-# RUN
-# -------------------------------
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",

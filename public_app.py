@@ -5,9 +5,6 @@ from audit import log_action
 
 app = Flask(__name__)
 
-# --------------------------------
-# Landing Page (Public)
-# --------------------------------
 @app.route("/", methods=["GET", "POST"])
 def landing():
     error = None
@@ -34,10 +31,6 @@ def landing():
 
     return render_template("landing.html")
 
-
-# --------------------------------
-# UI: Submit Anonymous Report
-# --------------------------------
 @app.route("/submit-ui", methods=["GET", "POST"])
 def submit_ui():
     if request.method == "POST":
@@ -52,14 +45,12 @@ def submit_ui():
         db = get_db()
         cursor = db.cursor()
 
-        # 🔹 Working copy (editable layer)
         cursor.execute(
             "INSERT INTO reports (report_id, content, content_hash, status) "
             "VALUES (%s, %s, %s, %s)",
             (report_id, content, content_hash, "SUBMITTED")
         )
 
-        # 🔹 Master copy (immutable layer)
         cursor.execute(
             "INSERT INTO master_reports (report_id, original_content, original_hash) "
             "VALUES (%s, %s, %s)",
@@ -74,16 +65,11 @@ def submit_ui():
 
     return render_template("submit.html")
 
-
-# --------------------------------
-# UI: User Messages + Status (PRG SAFE)
-# --------------------------------
 @app.route("/messages-ui/<report_id>", methods=["GET", "POST"])
 def messages_ui(report_id):
     db = get_db()
     cursor = db.cursor()
 
-    # Fetch ticket status
     cursor.execute(
         "SELECT status FROM reports WHERE report_id = %s",
         (report_id,)
@@ -95,7 +81,6 @@ def messages_ui(report_id):
 
     status = row[0]
 
-    # POST → insert → redirect
     if request.method == "POST":
 
         if status == "CLOSED":
@@ -115,8 +100,6 @@ def messages_ui(report_id):
             log_action(report_id, "MESSAGE_SENT_BY_USER", "anonymous_user")
 
         return redirect(f"/messages-ui/{report_id}")
-
-    # GET → fetch messages
     cursor.execute(
         "SELECT sender, message, timestamp FROM messages WHERE report_id = %s",
         (report_id,)
@@ -129,10 +112,6 @@ def messages_ui(report_id):
         status=status
     )
 
-
-# --------------------------------
-# API: Message Endpoint (Optional)
-# --------------------------------
 @app.route("/message/<report_id>", methods=["POST"])
 def send_message_api(report_id):
     db = get_db()
@@ -169,9 +148,5 @@ def send_message_api(report_id):
 
     return "Message sent anonymously"
 
-
-# --------------------------------
-# Run Public App
-# --------------------------------
 if __name__ == "__main__":
     app.run(debug=False)

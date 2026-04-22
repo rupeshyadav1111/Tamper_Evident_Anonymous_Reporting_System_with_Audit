@@ -21,7 +21,6 @@ body {
     height: 100vh;
 }
 
-/* Chat Container */
 .chat-container {
     width: 100%;
     max-width: 750px;
@@ -34,7 +33,6 @@ body {
     overflow: hidden;
 }
 
-/* Header */
 .chat-header {
     background: #243b55;
     color: white;
@@ -45,7 +43,6 @@ body {
     align-items: center;
 }
 
-/* Messages Area */
 .chat-messages {
     flex: 1;
     padding: 20px;
@@ -55,7 +52,6 @@ body {
     flex-direction: column;
 }
 
-/* Message Bubble */
 .message {
     margin-bottom: 12px;
     max-width: 75%;
@@ -94,7 +90,6 @@ body {
     opacity: 0.5;
 }
 
-/* Input Area */
 .chat-input {
     padding: 15px;
     border-top: 1px solid #ddd;
@@ -197,11 +192,10 @@ button:disabled {
 </div>
 
 <script>
-// Auto scroll to bottom
+
 const chatBox = document.getElementById("chatBox");
 chatBox.scrollTop = chatBox.scrollHeight;
 
-// Enter to send
 document.getElementById("messageInput").addEventListener("keydown", function(e) {
     if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
