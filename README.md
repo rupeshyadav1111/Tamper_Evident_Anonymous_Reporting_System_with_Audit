@@ -28,7 +28,7 @@ static/ — CSS / JS files
 
 1. Clone the repository
 
-git clone (https://github.com/rupeshyadav1111/Tamper_Evident_Anonymous_Reporting_System_with_Audit)
+git clone https://github.com/rupeshyadav1111/Tamper_Evident_Anonymous_Reporting_System_with_Audit
 
 2. Navigate to project folder
 
